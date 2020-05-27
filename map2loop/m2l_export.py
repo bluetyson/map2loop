@@ -1037,12 +1037,14 @@ def loop2gempy(test_data_name: str, tmp_path: str, vtk_path: str, orientations_f
     # Setting pile to model
     gp.map_series_to_surfaces(geo_model, map_series_to_surfaces, remove_unused_series=False)
 
-    #    Removing related data
-    del_surfaces = geo_model.surfaces.df.groupby('series').get_group('Default series')['surface']
-    geo_model.delete_surfaces(del_surfaces, remove_data=True)
+    if('Default series' in map_series_to_surfaces):
 
-    # Removing series that have not been mapped to any surface
-    geo_model.delete_series('Default series')
+        #    Removing related data
+        del_surfaces = geo_model.surfaces.df.groupby('series').get_group('Default series')['surface']
+        geo_model.delete_surfaces(del_surfaces, remove_data=True)
+
+        # Removing series that have not been mapped to any surface
+        geo_model.delete_series('Default series')
 
     if compute is True:
         gp.set_interpolator(geo_model, theano_optimizer='fast_run', dtype='float64')
