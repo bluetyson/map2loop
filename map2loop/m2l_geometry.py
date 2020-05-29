@@ -1186,52 +1186,7 @@ def process_plutons(tmp_path,output_path,geol_clip,local_paths,dtm,dtb,dtb_null,
 # Removes formations that don’t belong to a group, groups with no formations, orientations 
 # without formations, contacts without formations etc so gempy and other packages don’t have a fit.
 ###################################
-def tidy_data(output_path,tmp_path,use_group,use_interpolations,use_fat,pluton_form,inputs,workflow):
 
-    contacts=pd.read_csv(output_path+'contacts4.csv',",")
-    all_orientations=pd.read_csv(output_path+'orientations.csv',",")
-    intrusive_contacts=pd.read_csv(output_path+'ign_contacts.csv',",")
-    all_sorts=pd.read_csv(tmp_path+'all_sorts2.csv',",")
-
-    if('invented_orientations' in inputs and os.path.exists(output_path+'empty_series_orientations.csv')):
-        invented_orientations=pd.read_csv(output_path+'empty_series_orientations.csv',",")
-        all_orientations=pd.concat([all_orientations,invented_orientations],sort=False)
-    elif('invented_orientations' in inputs and not os.path.exists(output_path+'empty_series_orientations.csv')):
-        print('No invented orientations available for merging.')
-        
-    if('interpolated_orientations' in inputs and os.path.exists(tmp_path+'combo_full.csv')):
-        interpolated_orientations=pd.read_csv(tmp_path+'combo_full.csv',",")
-        all_orientations=pd.concat([all_orientations,interpolated_orientations.iloc[::2, :]],sort=False)
-    elif('interpolated_orientations' in inputs and not os.path.exists(tmp_path+'combo_full.csv')):
-        print('No interpolated orientations available for merging.')
-        
-    if('intrusive_orientations' in inputs and os.path.exists(output_path+'ign_orientations_'+pluton_form+'.csv')):
-        intrusive_orientations=pd.read_csv(output_path+'ign_orientations_'+pluton_form+'.csv',",")
-        all_orientations=pd.concat([all_orientations,intrusive_orientations],sort=False)
-    elif('intrusive_orientations' in inputs and not os.path.exists(output_path+'ign_orientations_'+pluton_form+'.csv')):
-        print('No intrusive orientations available for merging.')
-        
-    if('fat_orientations' in inputs and os.path.exists(output_path+'fold_axial_trace_orientations2.csv')):
-        fat_orientations=pd.read_csv(output_path+'fold_axial_trace_orientations2.csv',",")
-        all_orientations=pd.concat([all_orientations,fat_orientations],sort=False)
-    elif('fat_orientations' in inputs and not os.path.exists(output_path+'fold_axial_trace_orientations2.csv')):
-        print('No fat orientations available for merging.')
-        
-    if('near_fault_orientations' in inputs and os.path.exists(tmp_path+'ex_f_combo_full.csv')):
-        near_fault_orientations=pd.read_csv(tmp_path+'ex_f_combo_full.csv',",")
-        all_orientations=pd.concat([all_orientations,near_fault_orientations],sort=False)
-    elif('near_fault_orientations' in inputs and not os.path.exists(tmp_path+'ex_f_combo_full.csv')):
-        print('No near fault orientations orientations available for merging.')
-
-    if('cover_orientations' in inputs and os.path.exists(output_path+'cover_orientations.csv')):
-        cover_orientations=pd.read_csv(output_path+'cover_orientations.csv',",")
-        all_orientations=pd.concat([all_orientations,cover_orientations],sort=False)
-    elif('cover_orientations' in inputs and not os.path.exists(output_path+'cover_orientations.csv')):
-        print('No cover orientations available for merging.')
-        
-    if('contact_orientations' in inputs and os.path.exists(output_path+'contact_orientations.csv')):
-        contact_orientations=pd.read_csv(output_path+'contact_orientations.csv',",")
-        all_orientations=pd.concat([all_orientations,contact_orientations],sort=False)
 def tidy_data(output_path,tmp_path,use_group,use_interpolations,use_fat,pluton_form,inputs,workflow):
 
     contacts=pd.read_csv(output_path+'contacts4.csv',",")
