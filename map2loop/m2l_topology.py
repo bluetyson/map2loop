@@ -689,7 +689,8 @@ def check_near_fault_contacts(path_faults,all_sorts_path,fault_dimensions_path,g
                                 gp_fault_rel.loc[gp,'Fault_'+str(flt[c_l['o']])]=0
 
             elif(flt.geometry.type=='MultiLineString' or flt.geometry.type=='GeometryCollection' ):
-                
+                raise NameError('map2loop error: Fault_'+str(flt[c_l['o']])+'cannot be analysed as it is a multilinestring,\n  it may be a fault that is clipped into two parts by the bounding box\nfix in original shapefile??')
+                continue
                 for pline in flt.geometry:
                     flt_ls=LineString(pline)
                     midx=flt_ls.coords[0][0]+((flt_ls.coords[0][0]-flt_ls.coords[len(flt_ls.coords)-1][0])/2)
