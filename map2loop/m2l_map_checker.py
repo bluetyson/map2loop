@@ -1,8 +1,30 @@
 import geopandas as gpd
-from shapely.geometry import  LineString
+from shapely.geometry import  LineString, Polygon,MultiLineString
 import os.path
+from map2loop import m2l_utils      
 
-def check_map(structure_file,geology_file,fault_file,mindep_file,bbox,c_l):
+   
+#explodes polylines and modifies objectid for exploded parts
+def explode_polylines(indf,c_l):                                        
+    #indf = gpd.GeoDataFrame.from_file(indata)                  
+    outdf = gpd.GeoDataFrame(columns=indf.columns)              
+    for idx, row in indf.iterrows():                            
+        if type(row.geometry) == LineString:                    
+            outdf = outdf.append(row,ignore_index=True)         
+        if type(row.geometry) == MultiLineString:               
+            multdf = gpd.GeoDataFrame(columns=indf.columns)     
+            recs = len(row.geometry)                            
+            multdf = multdf.append([row]*recs,ignore_index=True)
+            i=0
+            for geom in range(recs):                            
+                multdf.loc[geom,'geometry'] = row.geometry[geom]
+                multdf.loc[geom,c_l['o']]=str(multdf.loc[geom,c_l['o']])+'_'+str(i)
+                print('Fault_'+multdf.loc[geom,c_l['o']],'is one of a set of duplicates, so renumbering')
+                i=i+1
+            outdf = outdf.append(multdf,ignore_index=True)      
+    return outdf                                                
+    
+def check_map(structure_file,geology_file,fault_file,mindep_file,tmp_path,bbox,c_l,dst_crs):
     
     for file_name in (structure_file,geology_file,fault_file,mindep_file):
         if not os.path.isfile(structure_file):
@@ -75,6 +97,26 @@ def check_map(structure_file,geology_file,fault_file,mindep_file,bbox,c_l):
         nans=mindeps[c_l[code]].isnull().sum() 
         if(nans>0):
             error='map2loop error: '+str(nans)+' NaN/blank found in column '+str(c_l[code])+' of mineral deposits file'
-            raise NameError(error)
+            raise NameError(error)     
+            
+    # explode fault/fold multipolylines
+    # sometimes faults go off map and come back in again which after clipping creates multipolylines
+    
+    all_faults=gpd.read_file(fault_file,bbox=bbox)
+    
+    y_point_list = [bbox[1], bbox[1], bbox[3], bbox[3], bbox[1]]
+    x_point_list = [bbox[0], bbox[2], bbox[2], bbox[0], bbox[0]]
+    
+    bbox_geom = Polygon(zip(x_point_list, y_point_list))
+    
+    polygo = gpd.GeoDataFrame(index=[0], crs=dst_crs, geometry=[bbox_geom]) 
+    
+    faults_clip=m2l_utils.clip_shp(all_faults,polygo)
+    
+    faults_explode=explode_polylines(faults_clip,c_l)     
+    if(len(faults_explode)>len(faults_clip)):
+        print('map2loop warning: some faults are multipolylines, and have been split')
+    fault_file=tmp_path+'faults.clip'
+    faults_explode.to_file(fault_file)    
     
     print('No errors found')
