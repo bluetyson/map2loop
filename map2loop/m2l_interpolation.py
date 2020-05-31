@@ -544,10 +544,22 @@ def save_contact_vectors(geology_file,tmp_path,dtm,dtb,dtb_null,cover_map,bbox,c
     #geol_file.plot( color='black',edgecolor='black') 
     
     npts = 0
-    x = np.zeros(20000)
-    y = np.zeros(20000)
-    l = np.zeros(20000)
-    m = np.zeros(20000)
+    i=0
+    for indx,acontact in geol_file.iterrows():   #loop through distinct linestrings in MultiLineString
+        if(acontact.geometry.type=='MultiLineString'):
+            for line in acontact.geometry: # loop through line segments
+                if(m2l_utils.mod_safe(i,decimate)  ==0):
+                    npoint=1
+                i=i+1
+        else:
+            if(  m2l_utils.mod_safe(i,decimate)  ==0):
+                npoint=1
+            i=i+1
+
+    x = np.zeros(i+1)
+    y = np.zeros(i+1)
+    l = np.zeros(i+1)
+    m = np.zeros(i+1)
     
     f=open(tmp_path+'raw_contacts.csv','w')
     f.write("X,Y,Z,angle,lsx,lsy,formation,group\n")
@@ -1630,19 +1642,21 @@ def process_fault_throw_and_near_faults_from_grid(tmp_path,output_path,dtm_repro
                               .format(lastrx,lastry,last_height_r,lastrc.replace(" ","_").replace("-","_"))
                 fftc.write(ostr)   
                 
-                locations=[(lcode.iloc[len(lcode)-3].geometry.x,lcode.iloc[len(lcode)-3].geometry.y)]
-                last_height_l=m2l_utils.value_from_dtm_dtb(dtm,dtb,dtb_null,cover_map,locations)
-                ostr="{},{},{},{}\n"\
-                              .format(lcode.iloc[len(lcode)-3].geometry.x,lcode.iloc[len(lcode)-3].geometry.y,last_height_l,str(lcode.iloc[len(lcode)-3][c_l['c']]).replace(" ","_").replace("-","_"))
-                if(not str(lcode.iloc[len(lcode)-3][c_l['c']])=='nan'):
-                   fftc.write(ostr)   
-                locations=[(rcode.iloc[len(rcode)-3].geometry.x,rcode.iloc[len(rcode)-3].geometry.y)]
-                last_height_r=m2l_utils.value_from_dtm_dtb(dtm,dtb,dtb_null,cover_map,locations)
-                ostr="{},{},{},{}\n"\
-                              .format(lcode.iloc[len(rcode)-3].geometry.x,rcode.iloc[len(lcode)-3].geometry.y,last_height_r,str(rcode.iloc[len(rcode)-3][c_l['c']]).replace(" ","_").replace("-","_"))
-                if(not str(rcode.iloc[len(rcode)-3][c_l['c']])=='nan'):
-                   fftc.write(ostr)   
-                                    
+                if(len(lcode)>5):
+                    locations=[(lcode.iloc[len(lcode)-3].geometry.x,lcode.iloc[len(lcode)-3].geometry.y)]
+                    last_height_l=m2l_utils.value_from_dtm_dtb(dtm,dtb,dtb_null,cover_map,locations)
+                    ostr="{},{},{},{}\n"\
+                                  .format(lcode.iloc[len(lcode)-3].geometry.x,lcode.iloc[len(lcode)-3].geometry.y,last_height_l,str(lcode.iloc[len(lcode)-3][c_l['c']]).replace(" ","_").replace("-","_"))
+                    if(not str(lcode.iloc[len(lcode)-3][c_l['c']])=='nan'):
+                       fftc.write(ostr)   
+                if(len(rcode)>5):
+                    locations=[(rcode.iloc[len(rcode)-3].geometry.x,rcode.iloc[len(rcode)-3].geometry.y)]
+                    last_height_r=m2l_utils.value_from_dtm_dtb(dtm,dtb,dtb_null,cover_map,locations)
+                    ostr="{},{},{},{}\n"\
+                                  .format(lcode.iloc[len(rcode)-3].geometry.x,rcode.iloc[len(rcode)-3].geometry.y,last_height_r,str(rcode.iloc[len(rcode)-3][c_l['c']]).replace(" ","_").replace("-","_"))
+                    if(not str(rcode.iloc[len(rcode)-3][c_l['c']])=='nan'):
+                       fftc.write(ostr)   
+                                        
                 # loop through left and right sides to find equivalent contact pairs along fault
                 
                 if(len(lcontact)>0 and len(rcontact)>0):                
@@ -1782,19 +1796,20 @@ def process_fault_throw_and_near_faults_from_grid(tmp_path,output_path,dtm_repro
                     ostr="{},{},{},{}\n"\
                                   .format(lastrx,lastry,last_height_r,lastrc.replace(" ","_").replace("-","_"))
                     fftc.write(ostr)   
-                    
-                    locations=[(lcode.iloc[len(lcode)-3].geometry.x,lcode.iloc[len(lcode)-3].geometry.y)]
-                    last_height_l=m2l_utils.value_from_dtm_dtb(dtm,dtb,dtb_null,cover_map,locations)
-                    ostr="{},{},{},{}\n"\
-                                  .format(lcode.iloc[len(lcode)-3].geometry.x,lcode.iloc[len(lcode)-3].geometry.y,last_height_l,str(lcode.iloc[len(lcode)-3][c_l['c']]).replace(" ","_").replace("-","_"))
-                    if(not str(lcode.iloc[len(lcode)-3][c_l['c']])=='nan'):
-                        fftc.write(ostr)                     
-                    locations=[(rcode.iloc[len(rcode)-3].geometry.x,rcode.iloc[len(rcode)-3].geometry.y)]
-                    last_height_r=m2l_utils.value_from_dtm_dtb(dtm,dtb,dtb_null,cover_map,locations)
-                    ostr="{},{},{},{}\n"\
-                                  .format(lcode.iloc[len(rcode)-3].geometry.x,rcode.iloc[len(lcode)-3].geometry.y,last_height_r,str(rcode.iloc[len(rcode)-3][c_l['c']]).replace(" ","_").replace("-","_"))
-                    if(not str(rcode.iloc[len(rcode)-3][c_l['c']])=='nan'):
-                        fftc.write(ostr)                     
+                    if(len(lcode)>5):                        
+                        locations=[(lcode.iloc[len(lcode)-3].geometry.x,lcode.iloc[len(lcode)-3].geometry.y)]
+                        last_height_l=m2l_utils.value_from_dtm_dtb(dtm,dtb,dtb_null,cover_map,locations)
+                        ostr="{},{},{},{}\n"\
+                                      .format(lcode.iloc[len(lcode)-3].geometry.x,lcode.iloc[len(lcode)-3].geometry.y,last_height_l,str(lcode.iloc[len(lcode)-3][c_l['c']]).replace(" ","_").replace("-","_"))
+                        if(not str(lcode.iloc[len(lcode)-3][c_l['c']])=='nan'):
+                            fftc.write(ostr)                     
+                    if(len(rcode)>5):    
+                        locations=[(rcode.iloc[len(rcode)-3].geometry.x,rcode.iloc[len(rcode)-3].geometry.y)]
+                        last_height_r=m2l_utils.value_from_dtm_dtb(dtm,dtb,dtb_null,cover_map,locations)
+                        ostr="{},{},{},{}\n"\
+                                      .format(lcode.iloc[len(rcode)-3].geometry.x,rcode.iloc[len(rcode)-3].geometry.y,last_height_r,str(rcode.iloc[len(rcode)-3][c_l['c']]).replace(" ","_").replace("-","_"))
+                        if(not str(rcode.iloc[len(rcode)-3][c_l['c']])=='nan'):
+                            fftc.write(ostr)                     
         
                     # loop through left and right sides to find equivalent contact pairs along fault
 

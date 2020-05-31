@@ -1322,9 +1322,10 @@ def tidy_data(output_path,tmp_path,use_group,use_interpolations,use_fat,pluton_f
         for ano in all_orientations.iterrows():
             #print(ano[1]['formation'])
             #print(all_sorts.loc[ano[1]['formation']]['group'])
-            if(all_sorts.loc[ano[1]['formation']]['group'] in agroup and all_sorts.loc[ano[1]['formation']]['group'] in use_group):
-                found=True
-                break
+            if(ano[1]['formation'] in unique_allsorts_contacts ):
+                if(all_sorts.loc[ano[1]['formation']]['group'] in agroup and all_sorts.loc[ano[1]['formation']]['group'] in use_group):
+                    found=True
+                    break
         if(not found):
             no_contacts.append(agroup)
             print('no orientations for the group:',agroup)
@@ -2471,4 +2472,23 @@ def save_basal_contacts_orientations_csv(contacts,orientations,geol_clip,tmp_pat
                             
                     i=i+1   
     f.close()
-    
+
+#explodes polylines and modifies objectid for exploded parts
+def explode_polylines(indf,c_l):                                        
+    #indf = gpd.GeoDataFrame.from_file(indata)                  
+    outdf = gpd.GeoDataFrame(columns=indf.columns)              
+    for idx, row in indf.iterrows():                            
+        if type(row.geometry) == LineString:                    
+            outdf = outdf.append(row,ignore_index=True)         
+        if type(row.geometry) == MultiLineString:               
+            multdf = gpd.GeoDataFrame(columns=indf.columns)     
+            recs = len(row.geometry)                            
+            multdf = multdf.append([row]*recs,ignore_index=True)
+            i=0
+            for geom in range(recs):                            
+                multdf.loc[geom,'geometry'] = row.geometry[geom]
+                multdf.loc[geom,c_l['o']]=str(multdf.loc[geom,c_l['o']])+'_'+str(i)
+                print(multdf.loc[geom,c_l['o']],'is a duplicate, so renumbering')
+                i=i+1
+            outdf = outdf.append(multdf,ignore_index=True)      
+    return outdf                                                
