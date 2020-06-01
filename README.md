@@ -82,10 +82,11 @@ A recent workshop as part of the Loop/MinEx CRC collaborations provides a tutori
 ##### loop2model:
 | content | filename | created by | example notebook |
 | ----- | ----- | ----- | ----- |
-| Gempy | Notebook creates 3D model itself | m2l_export. loop2gempy |  1a |
+| Gempy | Notebook creates 3D model itself | m2l_export. loop2gempy |  1 |
 | Basic vtk model thanks to gempy  | \*/vtk/\*.vtp | gempy |  1 |
-| Geomodeller | m2l.taskfile | m2l_export. loop2geomodeller |  1b  |
-| LoopStructural | Notebook creates 3D model itself | m2l_export. loop2LoopStructural |  1c  |
+| Geomodeller | m2l.taskfile | m2l_export. loop2geomodeller |  1  |
+| LoopStructural | Notebook creates 3D model itself | m2l_export. loop2LoopStructural |  1  |
+| noddy | Notebook creates 3D model, only of faults itself | Notebook 1 |  1  |
 
 Does not deal with sills yet.  
   
