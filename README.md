@@ -58,7 +58,7 @@ A recent workshop as part of the Loop/MinEx CRC collaborations provides a tutori
 | Clipped geology map shapefile | \*/tmp/geol_clip.shp | Notebook 1 |  1 |
 | Clipped fault & fold axial traces shapefile  | \*/tmp/faults_clip.shp | Notebook 1 |  1 |
 | Pluton contacts with z and formation | \*/output/ign_contacts.csv | m2l_geometry. process_plutons |  1 |
-| Local formation thickness estimates | \*/output/formation_thicknesses_norm.csv and formation_summary_thickness.csv| m2l_geometry. calc_thickness and normalise_thickness|  2 |
+| Local formation thickness estimates | \*/output/formation_thicknesses_norm.csv and formation_summary_thickness.csv| m2l_geometry. calc_thickness and normalise_thickness|  1 |
 | Fault dimensions | \*/output/fault_dimensions.csv | m2l_geometry. save_faults |  1 |
 | Fault displacements | \*/output/fault_displacement3.csv | m2l_interppolation. process_fault_throw_and_near_faults_from_grid |  1 |
 | Fault strat & thickness-based displacements | \*/output/fault_strat_offset3.csv | m2l_geometry. fault_strat_offset  |  1 |
@@ -68,7 +68,7 @@ A recent workshop as part of the Loop/MinEx CRC collaborations provides a tutori
 | content | filename | created by | example notebook |
 | ----- | ----- | ----- | ----- |
 | Bed dip dd data with z and formation | \*/output/orientations.csv or orientations_clean.csv| m2l_geometry. save_orientations |  1 |
-| Bed dip dd data with calculated polarity | \*/output/orientations_polarity.csv | m2l_geometry. save_orientations_with_polarity |  1c |
+| Bed dip dd data with calculated polarity | \*/output/orientations_polarity.csv | m2l_geometry. save_orientations_with_polarity |  1 |
 | Extra orientations for empty series | \*/output/empty_series_orientations.csv | m2l_geometry. create_orientations |  1 |
 | Fault orientation with z | \*/output/fault_orientations.csv |  m2l_geometry. save_faults |  1 |
 | Clipped orientations shapefile | \*/tmp/structure_clip.shp | Notebook 1 |  1 |
@@ -76,7 +76,7 @@ A recent workshop as part of the Loop/MinEx CRC collaborations provides a tutori
 | Interpolated contact vector grid | \*/tmp/interpolated_contacts.csv | m2l_interpolation. interpolate_contacts_grid |  1 |
 | Combined interpolation grid | \*/tmp/interpolated_combined.csv | m2l_interpolation. interpolation_grids |  1 |
 | Pluton contact orientations | \*/output/ign_orientations_\*.csv | m2l_geometry. process_plutons |  1 |
-| Near-Fold Axial Trace strat orientations | \*/output/fold_axial_trace_orientations2\.csv | m2l_geometry. save_fold_axial_traces_orientations |  5 |
+| Near-Fold Axial Trace strat orientations | \*/output/fold_axial_trace_orientations2\.csv | m2l_geometry. save_fold_axial_traces_orientations |  1 |
 | Estimated contact orientations | \*/output/contact_orientations\.csv | m2l_geometry. save_basal_contacts_orientations_csv |  1 |
 
 ##### loop2model:
