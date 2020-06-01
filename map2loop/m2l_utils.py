@@ -244,7 +244,7 @@ def reproject_dtm(path_in,path_out,src_crs,dst_crs):
                     dst_transform=transform,
                     dst_crs=dst_crs,
                     resampling=Resampling.nearest)
-                    
+            dst.close()        
     print("reprojected dtm geotif saved as",path_out)
 
 ############################################

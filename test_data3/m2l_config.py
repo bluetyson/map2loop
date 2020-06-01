@@ -13,8 +13,14 @@ model_base=-3200
 #PATHS
 
 local_paths=True       #flag to use local or WFS source for data inputs (True = local)
+import os
 
-test_data_path='../test_data3/'
+parts=os.getcwd()
+parts=parts.split('\\')
+last=len(parts)
+
+test_data_path='../'+parts[last-1]+'/'
+
 
 geology_file='hams2_geol.shp'   #input geology file (if local)
 fault_file='GEOS_GEOLOGY_LINEARSTRUCTURE_500K_GSD.shp' #input fault file (if local)
