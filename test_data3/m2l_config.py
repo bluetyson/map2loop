@@ -109,15 +109,15 @@ dtm_path=test_data_path+'dtm/'
 output_path=test_data_path+'output/'
 vtk_path=test_data_path+'vtk/'
 
+fault_file_csv=tmp_path+fault_file.replace(".shp",".csv")
+structure_file_csv=tmp_path+structure_file.replace(".shp",".csv")
+geology_file_csv=tmp_path+geology_file.replace(".shp",".csv")
+mindep_file_csv=tmp_path+mindep_file.replace(".shp",".csv")
+
 fault_file=data_path+fault_file
 structure_file=data_path+structure_file
 geology_file=data_path+geology_file
 mindep_file=data_path+mindep_file
-
-fault_file_csv=fault_file.replace(".shp",".csv").replace("/data/","/tmp/")
-structure_file_csv=structure_file.replace(".shp",".csv").replace("/data/","/tmp/")
-geology_file_csv=geology_file.replace(".shp",".csv").replace("/data/","/tmp/")
-mindep_file_csv=mindep_file.replace(".shp",".csv").replace("/data/","/tmp/")
 
 strat_graph_file=test_data_path+'graph/graph_strat_NONE.gml'
 
