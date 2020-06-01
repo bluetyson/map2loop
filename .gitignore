@@ -147,9 +147,6 @@ mansfield/*
 test_data_mdl/*
 ethan_3D/*
 dfa_test_data3/*
-test_data3/xtmp/*
-test_data3/xoutput/*
-test_data3/Models_Final/*
 test_minsys/*
 test_model_finite/*
 notebooks/geomodeller-batch.audit
@@ -165,5 +162,15 @@ example_minimum_data/*
 nishka/*
 SnowyMountain_Governor/*
 test_data_mdl/*
-Turner_Syncline/*
-source_data/*
+Turner_Syncline/tmp/*
+Turner_Syncline/output/*
+Turner_Syncline/dtm/*
+Turner_Syncline/graph/*
+Turner_Syncline/vtk/*
+test_data3/tmp/*
+test_data3/output/*
+test_data3/dtm/*
+test_data3/graph/*
+test_data3/vtk/*
+
+
