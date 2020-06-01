@@ -21,6 +21,7 @@ last=len(parts)
 
 test_data_path='../'+parts[last-1]+'/'
 
+data_path='../source_data/'
 
 geology_file='hams2_geol.shp'   #input geology file (if local)
 fault_file='GEOS_GEOLOGY_LINEARSTRUCTURE_500K_GSD.shp' #input fault file (if local)
@@ -103,7 +104,7 @@ m2m_cpp_path='../m2m_cpp/'
 
 graph_path=test_data_path+'graph/'
 tmp_path=test_data_path+'tmp/'
-data_path=test_data_path+'data/'
+#data_path=test_data_path+'data/'
 dtm_path=test_data_path+'dtm/'
 output_path=test_data_path+'output/'
 vtk_path=test_data_path+'vtk/'
