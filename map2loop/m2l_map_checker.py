@@ -2,7 +2,7 @@ import geopandas as gpd
 from shapely.geometry import  LineString, Polygon,MultiLineString
 import os.path
 from map2loop import m2l_utils      
-
+import warnings
    
 #explodes polylines and modifies objectid for exploded parts
 def explode_polylines(indf,c_l):                                        
@@ -39,7 +39,7 @@ def check_map(structure_file,geology_file,fault_file,mindep_file,tmp_path,bbox,c
     unique_o=set(orientations[c_l['gi']])
     
     if(not len(unique_o) == len(orientations)):
-        raise NameError('map2loop error: Duplicate orientation point unique IDs')
+        warnings.warn('map2loop error: Duplicate orientation point unique IDs')
     
     for code in ('d','dd','sf','gi'):
         if not c_l[code] in orientations.columns:
@@ -54,7 +54,7 @@ def check_map(structure_file,geology_file,fault_file,mindep_file,tmp_path,bbox,c
     unique_g=set(geology[c_l['o']])
     
     if(not len(unique_g) == len(geology)):
-        raise NameError('map2loop error: Duplicate geology polygon unique IDs')
+        warnings.warn('map2loop error: Duplicate geology polygon unique IDs')
     
     for code in ('c','ds','u','r1','min','max'):
         if not c_l[code] in geology.columns:
@@ -83,11 +83,6 @@ def check_map(structure_file,geology_file,fault_file,mindep_file,tmp_path,bbox,c
         if(nans>0):
             error='map2loop error: '+str(nans)+' NaN/blank found in column '+str(c_l[code])+' of fault/fold file'
             raise NameError(error)
-    
-    for ind,f in fault_folds.iterrows():
-        if((not f.geometry.type == 'LineString') and f[c_l['o']]== f[c_l['fault']]):
-            error='map2loop error: Fault_'+f[c_l['o']]+' is not of type LineString/PolyLine so map2loop cannot process it, sorry'
-            raise NameError(error)
             
     mindeps = gpd.read_file(mindep_file,bbox=bbox) 
     
@@ -115,8 +110,8 @@ def check_map(structure_file,geology_file,fault_file,mindep_file,tmp_path,bbox,c
     
     faults_explode=explode_polylines(faults_clip,c_l)     
     if(len(faults_explode)>len(faults_clip)):
-        print('map2loop warning: some faults are multipolylines, and have been split')
-    fault_file=tmp_path+'faults.clip'
+        warnings.warn('map2loop warning: some faults are MultiPolyLines, and have been split')
+    fault_file=tmp_path+'faults_clip.shp'
     faults_explode.to_file(fault_file)    
     
     print('No errors found')

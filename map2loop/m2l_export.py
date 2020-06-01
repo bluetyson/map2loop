@@ -858,12 +858,12 @@ def solve_pyamg(A,B):
 #
 # Calculates model and displays in LavaVu wthin notebook
 ##########################################################################
-def loop2LoopStructural(thickness_file,orientation_file,contacts_file,bbox):
+def loop2LoopStructural(thickness_file,orientation_file,contacts_file,tmp_path,bbox):
     from LoopStructural import GeologicalModel
     from LoopStructural.visualisation import LavaVuModelViewer
     import lavavu
 
-
+    all_sorts = pd.read_csv(tmp_path+'all_sorts_clean.csv')
 
     df = pd.read_csv(thickness_file)
     
@@ -872,17 +872,21 @@ def loop2LoopStructural(thickness_file,orientation_file,contacts_file,bbox):
         thickness[f] = np.mean(df[df['formation']==f]['thickness'])
 
     #display(thickness)
-    order = ['P__TKa_xs_k','P__TKo_stq','P__TKk_sf','P__TK_s',
+    order={}
+    for ind,fm in all_sorts.iterrows():
+        if(fm['code'] in df['formation'].unique()):
+            order[fm['code']]=fm['code']
+    """order = ['P__TKa_xs_k','P__TKo_stq','P__TKk_sf','P__TK_s',
     'A_HAu_xsl_ci', 'A_HAd_kd', 'A_HAm_cib', 'A_FOj_xs_b',
     'A_FO_xo_a', 'A_FO_od', 'A_FOu_bbo',
-    'A_FOp_bs', 'A_FOo_bbo', 'A_FOh_xs_f', 'A_FOr_b']
-    
+    'A_FOp_bs', 'A_FOo_bbo', 'A_FOh_xs_f', 'A_FOr_b']"""
     strat_val = {}
     val = 0
     for o in order:
         if o in thickness:
             strat_val[o] = val
             val+=thickness[o]
+
 
     #display(strat_val)    
     
@@ -902,7 +906,7 @@ def loop2LoopStructural(thickness_file,orientation_file,contacts_file,bbox):
     boundary_points = np.zeros((2,3))
     boundary_points[0,0] = bbox[0] 
     boundary_points[0,1] = bbox[1] 
-    boundary_points[0,2] = -20000 
+    boundary_points[0,2] = -5000 
     boundary_points[1,0] = bbox[2] 
     boundary_points[1,1] = bbox[3] 
     boundary_points[1,2] = 1200

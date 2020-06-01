@@ -1569,8 +1569,8 @@ def calc_thickness_with_grid(tmp_path,output_path,buffer,max_thickness_allowed,c
     cm=contacts['lsy'].to_numpy(dtype=float)
     ctextcode=contacts['formation'].to_numpy()
 
-    file=open(output_path+'formation_thicknesses.csv','w')
-    file.write('X,Y,formation,appar_th,thickness,cl,cm,meanl,meanm,meann,p1x,p1y,p2x,p2y,dip\n')
+    fth=open(output_path+'formation_thicknesses.csv','w')
+    fth.write('X,Y,formation,appar_th,thickness,cl,cm,p1x,p1y,p2x,p2y,dip\n')
     
     #np.savetxt(tmp_path+'dist.csv',dist,delimiter=',')
     #display("ppp",cx.shape,cy.shape,ox.shape,oy.shape,dip.shape,azimuth.shape,dist.shape)
@@ -1642,7 +1642,7 @@ def calc_thickness_with_grid(tmp_path,output_path,buffer,max_thickness_allowed,c
                                     #ostr=str(cx[k])+','+str(cy[k])+','+ctextcode[k]+','+str(int(true_thick))+\
                                     #    ','+str(cl[k])+','+str(cm[k])+','+str(lm)+','+str(mm)+','+str(nm)+','+\
                                     #    str(p1.x)+','+str(p1.y)+','+str(p2.x)+','+str(p2.y)+','+str(dip_mean)+'\n'
-                                    file.write(ostr)
+                                    fth.write(ostr)
                                     n_est=n_est+1
                             
             g=g+1
