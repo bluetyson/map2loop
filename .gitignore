@@ -138,10 +138,12 @@ Turner_Syncline/output/*
 Turner_Syncline/dtm/*
 Turner_Syncline/graph/*
 Turner_Syncline/vtk/*
+Turner_Syncline/Turner_Syncline*
 test_data3/tmp/*
 test_data3/output/*
 test_data3/dtm/*
 test_data3/graph/*
 test_data3/vtk/*
+test_data3/test_data3*
 
 
