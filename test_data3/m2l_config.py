@@ -68,6 +68,12 @@ c_l= {
   "f": 'FEATURE',              #field that contains information on type of structure
   "fault": 'Fault',            #text to search for in field defined by f code to show that this is a fault
   "fold": 'Fold axial trace',  #text to search for in field defined by f code to show that this is a fold axial trace
+  "fdip": 'DIP',               # field for numeric fault dip value
+  "fdipnull": '-9999',         # text to search for in field defined by fdip to show that this has no known dip
+  "fdipdir": 'DIP_DIR',        # field for text fault dip direction value 
+  "fdipdir_flag": 'alpha',        # flag for text fault dip direction type num e.g. 045 or alpha e.g. southeast    
+  "fdipest": 'DIP_EST',        # field for text fault dip estimate value
+  "fdipest_vals": 'gentle,moderate,steep',        # text to search for in field defined by fdipest to give fault dip estimate in increasing steepness
   "n": 'NAME',                 #field that contains information on name of fault (not used??)
   "t": 'TYPE',                 #field that contains information on type of fold
   "syn": 'syncline',           #text to search for in field defined by t to show that this is a syncline

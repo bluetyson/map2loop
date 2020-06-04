@@ -12,6 +12,7 @@ from map2loop import m2l_utils
 from map2loop import m2l_interpolation
 import numpy as np
 import os
+import random
 
 ####################################################
 # Export orientation data in csv format with heights and strat code added
@@ -540,6 +541,7 @@ def save_contacts_with_faults_removed(path_fault,path_out,dist_buffer,ls_dict,ls
 # of each fault trace with strike parallel to start end point line and arbitrary vertical dip. Also saves out csv list 
 # of faults with their start-finish length that could be used for filtering which faults to include in model.
 #########################################  
+
 def save_faults(path_faults,output_path,dtm,dtb,dtb_null,cover_map,c_l,fault_decimate,fault_min_len,fault_dip):
     faults_clip=gpd.read_file(path_faults)
     f=open(output_path+'/faults.csv',"w")
@@ -550,7 +552,13 @@ def save_faults(path_faults,output_path,dtm,dtb,dtb_null,cover_map,c_l,fault_dec
     fd=open(output_path+'/fault_dimensions.csv',"w")
     fd.write("Fault,HorizontalRadius,VerticalRadius,InfluenceDistance\n")
     #fd.write("Fault_ID,strike,dip_direction,down_dip\n")
-
+    
+    split=c_l['fdipest_vals'].split(",") #convert text dips to equally spaced angles
+    fault_dip_choices=np.linspace(0,90, len(split)+1)
+    dip_dirs={'north':(0.0,1.0),'northeast':(.707,.707),'east':(1.0,0.0),'southeast':(.707,-.707),
+              'south':(0.0,-1.0),'southwest':(-.707,-.707),'west':(-1.0,0.0),'northwest':(-.707,.707)}
+    
+    
     for indx,flt in faults_clip.iterrows():
         if(c_l['fault'] in flt[c_l['f']]):
             fault_name='Fault_'+str(flt[c_l['o']])
@@ -608,6 +616,36 @@ def save_faults(path_faults,output_path,dtm,dtb,dtb_null,cover_map,c_l,fault_dec
                     azimuth=degrees(atan2(lsy,-lsx)) % 180 #normal to line segment           
                     locations=[(flt_ls.coords[int((len(afs)-1)/2)][0],flt_ls.coords[int((len(afs)-1)/2)][1])]     
                     height=m2l_utils.value_from_dtm_dtb(dtm,dtb,dtb_null,cover_map,locations)
+                    
+                    if(flt[c_l['o']]=='-1'):
+                        print(flt[c_l['o']],c_l['fdip'],flt[c_l['fdip']],c_l['fdipnull'],c_l['fdipest'],
+                          flt[c_l['fdipest']],c_l['fdipest_vals'])
+                    
+                    if(flt[c_l['fdip']]==c_l['fdipnull']): # null specifc dip defined
+                        if(not str(flt[c_l['fdipest']])=='None'): #  dip estimate defined
+                            i=0
+                            for choice in split:
+                                if(flt[c_l['o']]=='-1'):
+                                    print(choice)
+                                if(choice == flt[c_l['fdipest']]):
+                                    fault_dip=int(fault_dip_choices[i+1])
+                                    if(flt[c_l['o']]=='-1'):
+                                        print('found_dip',fault_dip)
+                                i=i+1
+                        else:
+                            if(fault_dip == -999): # random flag
+                                fault_dip=random.randint(60,90)
+                    else:
+                        fault_dip=int(flt[c_l['fdip']]) # specific dip defined
+                    
+                    if(c_l['fdipdir_flag']=='num'): # numeric dip direction defined
+                        azimuth=flt[c_l['fdipdir']]
+                    elif(not str(flt[c_l['fdipdir']])=='None'): # alpha dip direction defined
+                        dotprod=degrees(acos((-lsx*dip_dirs[flt[c_l['fdipdir']]][0])+(lsy*dip_dirs[flt[c_l['fdipdir']]][1])))
+                        if(dotprod>45):
+                            fault_dip=-fault_dip
+
+                        
                     ostr="{},{},{},{},{},{},{}\n"\
                          .format(flt_ls.coords[int((len(flt_ls.coords)-1)/2)][0],flt_ls.coords[int((len(flt_ls.coords)-1)/2)][1],
                                  height,azimuth,fault_dip,1,fault_name)
@@ -618,7 +656,7 @@ def save_faults(path_faults,output_path,dtm,dtb,dtb_null,cover_map,c_l,fault_dec
                          .format(fault_name,strike/2,strike,strike/4.0)
                     #ostr=fault_name+","+str(strike/2)+","+str(strike)+","+str(strike/4.0)+"\n"
                     fd.write(ostr)
-            elif(flt.geometry.type=='MultiLineString' or flt.geometry.type=='GeometryCollection' ):
+            elif(flt.geometry.type=='MultiLineString' or flt.geometry.type=='GeometryCollection' ): #shouldn't happen any more
                 sum_strike=0
                 first=True
                 for pline in flt.geometry:
