@@ -2222,7 +2222,7 @@ def process_fault_throw_and_near_faults_from_grid(tmp_path,output_path,dtm_repro
     fault_orien=pd.read_csv(output_path+'fault_orientations.csv',",")
     fault_orien.set_index('formation',  inplace = True)
     f=open(output_path+'fault_displacements3.csv','w')
-    f.write('X,Y,fname,apparent_displacement,vertical_displacement\n')
+    f.write('X,Y,fname,apparent_displacement,vertical_displacement,downthrow_dir\n')
 
     for i in range (len(fdc)):
         r=int((yi[i]-bbox[1])/spacing)
@@ -2241,11 +2241,12 @@ def process_fault_throw_and_near_faults_from_grid(tmp_path,output_path,dtm_repro
         dotproduct=fabs((fdc[i][0]*lnorm)+(fdc[i][1]*mnorm))
         crossproduct= asin(lnorm * mfnorm - mnorm * lfnorm)
         if(crossproduct*all_coordsdist[i]<0): 
-            sign=1
+            down_dipdir=fault_orien.loc[fdc[i][2]]['DipDirection']
         else:
-            sign=-1
+            down_dipdir=(fault_orien.loc[fdc[i][2]]['DipDirection']+180.0)%360
+
             
-        ostr=str(xi[i])+','+str(yi[i])+','+str(fdc[i][2])+','+str(int(all_coordsdist[i]))+','+str(sign*abs(int(all_coordsdist[i]*tan(radians(dotproduct*dip_grid[r,c])))))+'\n'
+        ostr=str(xi[i])+','+str(yi[i])+','+str(fdc[i][2])+','+str(int(all_coordsdist[i]))+','+str(abs(int(all_coordsdist[i]*tan(radians(dotproduct*dip_grid[r,c])))))+','+str(down_dipdir)+'\n'
         f.write(ostr)
 
     f.close()
