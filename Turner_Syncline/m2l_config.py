@@ -15,11 +15,10 @@ model_base=-3200
 local_paths=True       #flag to use local or WFS source for data inputs (True = local)
 import os
 
-parts=os.getcwd()
-parts=parts.split('\\')
-last=len(parts)
 
-test_data_path='../'+parts[last-1]+'/'
+last=os.path.split(os.getcwd())[1]
+
+test_data_path='../'+last+'/'
 
 data_path='../source_data/'
 
