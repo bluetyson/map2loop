@@ -64,7 +64,7 @@ def scipy_idw(x, y, z, xi, yi):
 # sci_py version of Radial Basis Function interpolation of observations z at x,y locations returned at locations defined by xi,yi arraysplot(x,y,z,grid)
 ######################################
 def scipy_rbf(x, y, z, xi, yi):
-    interp = Rbf(x, y, z,smooth=1)
+    interp = Rbf(x, y, z,smooth=.5)
     return interp(xi, yi)
 
 ######################################
