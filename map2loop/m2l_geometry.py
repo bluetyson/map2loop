@@ -1386,17 +1386,20 @@ def tidy_data(output_path,tmp_path,use_group,use_interpolations,use_fat,pluton_f
 
     fao=open(output_path+'orientations_clean.csv',"w")
     fao.write('X,Y,Z,azimuth,dip,polarity,formation\n')
+    all_sort_codes=set(all_sorts.index)
+    #display(no_contacts,unique_contacts,all_sorts,all_sort_contacts)
 
     for ind,ano in all_orientations.iterrows():
-        if(all_sorts.loc[ano['formation']]['group'] in no_contacts or not ano['formation'] in unique_contacts or not all_sorts.loc[ano['formation']]['group'] in use_group):  #fix here################################
-            continue
-            #print('dud orientation:',ano[1]['formation'])
-        else:
-            ostr="{},{},{},{},{},{},{}\n"\
-                  .format(ano['X'],ano['Y'],ano['Z'],ano['azimuth'],ano['dip'],ano['polarity'],ano['formation'])
-            #ostr=str(ano['X'])+","+str(ano['Y'])+","+str(ano['Z'])+","+\
-            #     str(ano['azimuth'])+","+str(ano['dip'])+","+str(ano['polarity'])+","+ano['formation']+"\n"
-            fao.write(ostr)
+        if(ano['formation'] in all_sort_codes):
+            if(all_sorts.loc[ano['formation']]['group'] in no_contacts or not ano['formation'] in unique_contacts or not all_sorts.loc[ano['formation']]['group'] in use_group):  #fix here################################
+                continue
+                #print('dud orientation:',ano[1]['formation'])
+            else:
+                ostr="{},{},{},{},{},{},{}\n"\
+                      .format(ano['X'],ano['Y'],ano['Z'],ano['azimuth'],ano['dip'],ano['polarity'],ano['formation'])
+                #ostr=str(ano['X'])+","+str(ano['Y'])+","+str(ano['Z'])+","+\
+                #     str(ano['azimuth'])+","+str(ano['dip'])+","+str(ano['polarity'])+","+ano['formation']+"\n"
+                fao.write(ostr)
 
     fao.close()
 

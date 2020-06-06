@@ -203,11 +203,11 @@ def save_group(G,path_out,glabels,geol,c_l):
         for f in GpD.edges:
             if(e[0]==f[1] and e[1]==f[0] and e[0]<f[0]): #arbitrary choice to ensure edge is not completely removed
                 Gp.remove_edge(e[0],e[1])
-
+    display(glabels)
     plt.figure(1) #display strat graph for one group
     plt.title("groups")
     nx.draw_networkx(Gp, pos=nx.kamada_kawai_layout(Gp), arrows=True,with_labels=False)
-    nx.draw_networkx_labels(Gp,pos=nx.kamada_kawai_layout(Gp), labels=glabels, font_size=12,font_family='sans-serif')
+    nx.draw_networkx_labels(Gp,pos=nx.kamada_kawai_layout(Gp),  font_size=12,font_family='sans-serif')
 
     if(len(gp_ages)>10): # when lots of groups very large number of possibilities so short cut to first choice.
         glist=list(nx.topological_sort(Gp)) #all possible sorted directional graphs    
