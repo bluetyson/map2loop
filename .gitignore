@@ -129,8 +129,6 @@ notebooks/old/*
 _cropped_DEM.tif
 topo.xyz
 .idea/*
-m2m_cpp/*
-m2m_cpp/map2model.exe
 fabiele/*
 example_minimum_data/*
 Turner_Syncline/tmp/*

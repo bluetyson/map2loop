@@ -24,12 +24,13 @@ def explode_polylines(indf,c_l):
             outdf = outdf.append(multdf,ignore_index=True)      
     return outdf                                                
     
-def check_map(structure_file,geology_file,fault_file,mindep_file,tmp_path,bbox,c_l,dst_crs):
+def check_map(structure_file,geology_file,fault_file,mindep_file,tmp_path,bbox,c_l,dst_crs,local_paths):
     
-    for file_name in (structure_file,geology_file,fault_file,mindep_file):
-        if not os.path.isfile(structure_file):
-            error='map2loop error: file '+file_name+' not found'
-            raise NameError(error)
+    if(local_paths):
+        for file_name in (structure_file,geology_file,fault_file,mindep_file):
+            if not os.path.isfile(structure_file):
+                error='map2loop error: file '+file_name+' not found'
+                raise NameError(error)
     
     orientations = gpd.read_file(structure_file,bbox=bbox)
     
@@ -111,6 +112,7 @@ def check_map(structure_file,geology_file,fault_file,mindep_file,tmp_path,bbox,c
     faults_explode=explode_polylines(faults_clip,c_l)     
     if(len(faults_explode)>len(faults_clip)):
         warnings.warn('map2loop warning: some faults are MultiPolyLines, and have been split')
+    faults_explode.crs = dst_crs
     fault_file=tmp_path+'faults_clip.shp'
     faults_explode.to_file(fault_file)    
     

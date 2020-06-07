@@ -598,9 +598,9 @@ def save_Parfile(m2m_cpp_path,c_l,graph_path,geology_file_csv,fault_file_csv,str
     f.write('POLYGON: DESCRIPTION            ='+c_l['ds']+'\n')
     f.write('POLYGON: ROCKTYPE1              ='+c_l['r1']+'\n')
     f.write('POLYGON: ROCKTYPE2              ='+c_l['r2']+'\n')
-    f.write('DEPOSIT: SITE CODE                                  =SITE_CODE\n')
-    f.write('DEPOSIT: SITE TYPE                                  =SITE_TYPE_\n')
-    f.write('DEPOSIT: SITE COMMODITY                             =SITE_COMMO\n')
+    f.write('DEPOSIT: SITE CODE              ='+c_l['msc']+'\n')
+    f.write('DEPOSIT: SITE TYPE              ='+c_l['mst']+'\n')
+    f.write('DEPOSIT: SITE COMMODITY         ='+c_l['mscm']+'\n')
 
     f.write('--- SOME CONSTANTS: ----------------------------------------------------------------------------\n')
     f.write('FAULT AXIAL FEATURE NAME        ='+c_l['fold']+'\n')
