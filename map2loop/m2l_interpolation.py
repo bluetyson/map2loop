@@ -1377,7 +1377,10 @@ def interpolation_grids(geology_file,structure_file,basal_contacts,bbox,spacing,
 
     geology[c_l['g']].fillna(geology[c_l['g2']], inplace=True)
     geology[c_l['g']].fillna(geology[c_l['c']], inplace=True)
-
+    
+    if(spacing<0):
+        spacing=-(bbox[2]-bbox[0])/spacing
+    
     x=(bbox[2]-bbox[0])/spacing
     y=(bbox[3]-bbox[1])/spacing
 
