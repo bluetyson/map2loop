@@ -679,11 +679,11 @@ def plot_bedding_stereonets(orientations_clean,geology,c_l):
     ax.grid(True)
     text = ax.text(2.2, 1.37, "All data", color='b')
     plt.show()
+    group_girdle={}
 
     for gp in groups:
-
+        
         all_orientations=orientations[orientations[c_l['g']]==gp]
-
         if(len(all_orientations)>0):
             print("----------------------------------------------------------------------------------------------------------------------")
             print(gp,"observations n=",len(all_orientations))
@@ -698,54 +698,60 @@ def plot_bedding_stereonets(orientations_clean,geology,c_l):
             ax.pole(strikes, dips, markersize=5, color='w')
             ax.grid(True)
             text = ax.text(2.2, 1.37,gp, color='b')
+            fit_strike, fit_dip = mplstereonet.fit_girdle(strikes, dips)
+            (plunge,), (bearing,) = mplstereonet.pole2plunge_bearing(fit_strike, fit_dip)            
+            group_girdle[gp]=(plunge, bearing,len(all_orientations))
+            print('strike/dip of girdle',fit_strike, '/', fit_dip)                
             plt.show()
         else:
             print("----------------------------------------------------------------------------------------------------------------------")
             print(gp,"observations has no observations")
+            group_girdle[gp]=(-999,-999,0)
 
+    if(False):
+        for gp in groups:
 
-    for gp in groups:
-
-        print("----------------------------------------------------------------------------------------------------------------------")
-        print(gp)
-        #display(all_sorts2)
-        ind=0
-        orientations2=orientations[orientations[c_l['g']]==gp]
-
-        for code in codes:
-            orientations3=orientations2[orientations2[c_l['c']]==code]
-            ind2=int(fmod(ind,3))
-            if(len(orientations3)>0):
-                print(code,"observations n=",len(orientations3))
-            #display(orientations2)
-            if(len(orientations3)>0):
-                if(ind2==0):
-                    fig, ax = mplstereonet.subplots(1,3,figsize=(15,15))
-                if(c_l['otype']=='dip direction'):
-                    strikes = orientations3[c_l['dd']].values -90
-                else:
-                    strikes = orientations3[c_l['dd']].values
-
-                dips = orientations3[c_l['d']].values
-
-                cax = ax[ind2].density_contourf(strikes, dips, measurement='poles')
-                ax[ind2].pole(strikes, dips, markersize=5, color='w')
-                ax[ind2].grid(True)
-                #fig.colorbar(cax)
-                text = ax[ind2].text(2.2, 1.37, code, color='b')
-                
-                # Fit a plane to the girdle of the distribution and display it.
-                fit_strike, fit_dip = mplstereonet.fit_girdle(strikes, dips)
-                print('strike/dip of girdle',fit_strike, '/', fit_dip)                
-               
-                if(ind2==2):
-                    plt.show()
-
-                ind=ind+1
-                
-
-        if(ind>0 and not ind2==2):
-            plt.show()
+            print("----------------------------------------------------------------------------------------------------------------------")
+            print(gp)
+            #display(all_sorts2)
+            ind=0
+            orientations2=orientations[orientations[c_l['g']]==gp]
+    
+            for code in codes:
+                orientations3=orientations2[orientations2[c_l['c']]==code]
+                ind2=int(fmod(ind,3))
+                if(len(orientations3)>0):
+                    print(code,"observations n=",len(orientations3))
+                #display(orientations2)
+                if(len(orientations3)>0):
+                    if(ind2==0):
+                        fig, ax = mplstereonet.subplots(1,3,figsize=(15,15))
+                    if(c_l['otype']=='dip direction'):
+                        strikes = orientations3[c_l['dd']].values -90
+                    else:
+                        strikes = orientations3[c_l['dd']].values
+    
+                    dips = orientations3[c_l['d']].values
+    
+                    cax = ax[ind2].density_contourf(strikes, dips, measurement='poles')
+                    ax[ind2].pole(strikes, dips, markersize=5, color='w')
+                    ax[ind2].grid(True)
+                    #fig.colorbar(cax)
+                    text = ax[ind2].text(2.2, 1.37, code, color='b')
+                    
+                    # Fit a plane to the girdle of the distribution and display it.
+                    fit_strike, fit_dip = mplstereonet.fit_girdle(strikes, dips)
+                    print('strike/dip of girdle',fit_strike, '/', fit_dip)                
+                   
+                    if(ind2==2):
+                        plt.show()
+    
+                    ind=ind+1
+                    
+    
+            if(ind>0 and not ind2==2):
+                plt.show()
+    return(group_girdle)
             
 def plot_bedding_stereonets_old(orientations,all_sorts):
     import mplstereonet
