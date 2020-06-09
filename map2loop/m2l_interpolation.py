@@ -1657,7 +1657,7 @@ def process_fault_throw_and_near_faults_from_grid(tmp_path,output_path,dtm_repro
                     locations=[(rcode.iloc[len(rcode)-3].geometry.x,rcode.iloc[len(rcode)-3].geometry.y)]
                     last_height_r=m2l_utils.value_from_dtm_dtb(dtm,dtb,dtb_null,cover_map,locations)
                     ostr="{},{},{},{}\n"\
-                                  .format(lcode.iloc[len(rcode)-3].geometry.x,rcode.iloc[len(rcode)-3].geometry.y,last_height_r,str(rcode.iloc[len(rcode)-3][c_l['c']]).replace(" ","_").replace("-","_"))
+                                  .format(rcode.iloc[len(rcode)-3].geometry.x,rcode.iloc[len(rcode)-3].geometry.y,last_height_r,str(rcode.iloc[len(rcode)-3][c_l['c']]).replace(" ","_").replace("-","_"))
                     if(not str(rcode.iloc[len(rcode)-3][c_l['c']])=='nan'):
                        fftc.write(ostr)   
                                         
