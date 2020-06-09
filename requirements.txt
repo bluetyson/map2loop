@@ -10,4 +10,5 @@ owslib
 descartes
 gdal
 pyproj
-mplstereonet
+mplstereonet>=0.6
+pyamg
