@@ -8,7 +8,8 @@ import operator
 import shapely.affinity
 from shapely.ops import split
 from shapely.geometry import Point, LineString, MultiLineString, GeometryCollection, Polygon
-from math import degrees,atan2
+from math import degrees,atan2, acos, degrees
+
 from map2loop import m2l_utils
 
 
@@ -737,3 +738,71 @@ def check_near_fault_contacts(path_faults,all_sorts_path,fault_dimensions_path,g
                                 gp_fault_rel.loc[gp,'Fault_'+str(flt[c_l['o']])]=0
                                 
     gp_fault_rel.to_csv(gp_fault_rel_path)
+
+
+def super_groups_and_groups(group_girdle,tmp_path):
+    group_girdle =pd.DataFrame.from_dict(group_girdle,orient='index')
+    group_girdle.columns = ['plunge', 'bearing', 'num orientations']
+    group_girdle.sort_values(by='num orientations', ascending=False,inplace=True)
+    display(group_girdle)
+
+
+    l,m,n=m2l_utils.ddd2dircos(group_girdle.iloc[0]['plunge'],group_girdle.iloc[0]['bearing'])
+    super_group=pd.DataFrame([[group_girdle[0:1].index[0],'Super_Group_0',l,m,n]],columns=['Group','Super_Group','l','m','n'])
+    super_group.set_index('Group',inplace=True)
+
+    sg_index=0
+    for i in range(1,len(group_girdle)):
+        l,m,n=m2l_utils.ddd2dircos(group_girdle.iloc[i]['plunge'],group_girdle.iloc[i]['bearing'])
+        found=False
+        sg_i=0
+        for ind,sg in super_group.iterrows():
+
+            c = sg['l']*l + sg['m']*m + sg['n']*n
+            if c>1:
+                c=1
+            c=degrees(acos(c))  
+
+            if(c<30  and not found):
+                found=True
+                sgname='Super_Group_'+str(sg_i)
+                super_group_old=pd.DataFrame([[group_girdle[i:i+1].index[0],sgname,l,m,n]],columns=['Group','Super_Group','l','m','n'])
+                super_group_old.set_index('Group',inplace=True)
+                super_group=super_group.append(super_group_old)
+            sg_i=sg_i+1
+
+        if(not found):
+
+            sg_index=sg_index+1
+            #print('not found',sg_index)
+            sgname='Super_Group_'+str(sg_index)
+            super_group_new=pd.DataFrame([[group_girdle[i:i+1].index[0],sgname,l,m,n]],columns=['Group','Super_Group','l','m','n'])
+            super_group_new.set_index('Group',inplace=True)
+            super_group=super_group.append(super_group_new)
+
+
+
+    use_gcode3=[]
+    for ind,sg in super_group.iterrows():
+        clean=ind.replace(" ","_").replace("-","_")
+        use_gcode3.append(clean)
+
+
+    sg2=set(super_group['Super_Group'])
+    super_groups=[]
+    for s in sg2:
+        temp=[]
+        for  ind,sg in super_group.iterrows():
+            if(s == sg['Super_Group']):
+                temp.append(ind)
+        super_groups.append(temp)
+
+
+    f=open(tmp_path+'super_groups.csv','w')
+    for sg in super_groups:
+        for s in sg:
+            f.write(str(s)+',')
+        f.write('\n')
+    f.close()
+    return(super_groups,use_gcode3)
+    
