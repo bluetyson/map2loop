@@ -12,3 +12,4 @@ gdal
 pyproj
 mplstereonet>=0.6
 pyamg
+ipyleaflet
