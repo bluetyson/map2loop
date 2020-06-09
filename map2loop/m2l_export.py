@@ -858,88 +858,83 @@ def solve_pyamg(A,B):
 #
 # Calculates model and displays in LavaVu wthin notebook
 ##########################################################################
-def loop2LoopStructural(thickness_file,orientation_file,contacts_file,tmp_path,bbox):
-    from LoopStructural import GeologicalModel
-    from LoopStructural.visualisation import LavaVuModelViewer
-    import lavavu
+def loop2LoopStructural(directory):
+    visualise = False
+    ## make sure everything is installed and can be imported
+    try:
+        from LoopStructural import GeologicalModel
+        from LoopStructural.utils import process_map2loop
+    except ImportError:
+        print('Loop Structural not installed')
+        return
+    try:
+        from LoopStructural.visualisation import LavaVuModelViewer
+        visualise = True
+    except ImportError:
+        print("Lavavu is not installed, try installing it with pip \n"
+              "Model will be built but cannot be visualised")
 
-    all_sorts = pd.read_csv(tmp_path+'all_sorts_clean.csv')
+    m2l_data = process_map2loop(directory)
+    boundary_points = np.zeros((2, 3))
+    boundary_points[0, 0] = m2l_data['bounding_box']['minx']
+    boundary_points[0, 1] = m2l_data['bounding_box']['miny']
+    boundary_points[0, 2] = m2l_data['bounding_box']['lower']
+    boundary_points[1, 0] = m2l_data['bounding_box']['maxx']
+    boundary_points[1, 1] = m2l_data['bounding_box']['maxy']
+    boundary_points[1, 2] = m2l_data['bounding_box']['upper']
 
-    df = pd.read_csv(thickness_file)
-    
-    thickness = {}
-    for f in df['formation'].unique():
-        thickness[f] = np.mean(df[df['formation']==f]['thickness'])
+    model = GeologicalModel(boundary_points[0, :], boundary_points[1, :])
+    model.set_model_data(m2l_data['data'])
 
-    #display(thickness)
-    order={}
-    for ind,fm in all_sorts.iterrows():
-        if(fm['code'] in df['formation'].unique()):
-            order[fm['code']]=fm['code']
-    """order = ['P__TKa_xs_k','P__TKo_stq','P__TKk_sf','P__TK_s',
-    'A_HAu_xsl_ci', 'A_HAd_kd', 'A_HAm_cib', 'A_FOj_xs_b',
-    'A_FO_xo_a', 'A_FO_od', 'A_FOu_bbo',
-    'A_FOp_bs', 'A_FOo_bbo', 'A_FOh_xs_f', 'A_FOr_b']"""
-    strat_val = {}
-    val = 0
-    for o in order:
-        if o in thickness:
-            strat_val[o] = val
-            val+=thickness[o]
+    faults = []
+    for f in m2l_data['max_displacement'].keys():
+        if model.data[model.data['type'] == f].shape[0] == 0:
+            continue
+        fault_id = f[6:]
+        overprints = []
+        try:
+            overprint_id = fault_fault_relations[fault_fault_relations[fault_id] == 1]['fault_id'].to_numpy()
+            for i in overprint_id:
+                overprints.append(['Fault_%i' % i])
+        except:
+            print('No entry for %s in fault_fault_relations' % f)
+        #     continue
+        faults.append(model.create_and_add_fault(f,
+                                                 -m2l_data['max_displacement'][f],
+                                                 faultfunction='BaseFault',
+                                                 interpolatortype='FDI',
+                                                 nelements=1e4,
+                                                 data_region=.1,
+                                                 #                                                  regularisation=[1,1,1],
+                                                 solver='pyamg',
+                                                 #                                                  damp=True,
+                                                 #                                                  buffer=0.1,
+                                                 #                                                  steps=1,
+                                                 overprints=overprints,
+                                                 cpw=10,
+                                                 npw=10
+                                                 )
+                      )
 
+    ## loop through all of the groups and add them to the model in youngest to oldest.
+    group_features = []
+    for i in m2l_data['groups']['group number'].unique():
+        g = m2l_data['groups'].loc[m2l_data['groups']['group number'] == i, 'group'].unique()[0]
+        group_features.append(model.create_and_add_foliation(g,
+                                                             interpolatortype="PLI",  # which interpolator to use
+                                                             nelements=1e5,  # how many tetras/voxels
+                                                             buffer=0.5,  # how much to extend nterpolation around box
+                                                             solver='pyamg',
+                                                             damp=True))
+        # if the group was successfully added (not null) then lets add the base (0 to be unconformity)
+        if group_features[-1]:
+            model.add_unconformity(group_features[-1]['feature'], 0)
+    model.set_stratigraphic_column(m2l_data['stratigraphic_column'])
+    if visualise:
+        viewer = LavaVuModelViewer(model)
+        viewer.add_model(cmap='tab20')
+        viewer.interactive()
 
-    #display(strat_val)    
-    
-    orientations = pd.read_csv(orientation_file)
-    contacts = pd.read_csv(contacts_file) 
-    
-    contacts['val'] = np.nan 
-
-    for o in strat_val:
-        contacts.loc[contacts['formation']==o,'val'] = strat_val[o]
-    data = pd.concat([orientations,contacts],sort=False)
-    data['type'] = np.nan
-    for o in order:
-        data.loc[data['formation']==o,'type'] = 's0'
-    data     
-    
-    boundary_points = np.zeros((2,3))
-    boundary_points[0,0] = bbox[0] 
-    boundary_points[0,1] = bbox[1] 
-    boundary_points[0,2] = -5000 
-    boundary_points[1,0] = bbox[2] 
-    boundary_points[1,1] = bbox[3] 
-    boundary_points[1,2] = 1200
-    
-    model = GeologicalModel(boundary_points[0,:],boundary_points[1,:])
-    model.set_model_data(data)
-    strati = model.create_and_add_foliation('s0', #identifier in data frame
-                                                        interpolatortype="FDI", #which interpolator to use
-                                                        nelements=400000, # how many tetras/voxels
-                                                        buffer=0.1, # how much to extend nterpolation around box
-                                                        solver='external',
-                                                        external=solve_pyamg
-                                                       )   
-    #viewer = LavaVuModelViewer()
-    viewer = LavaVuModelViewer(model)
-    viewer.add_data(strati['feature'])
-    viewer.add_isosurface(strati['feature'],
-    #                       nslices=10,
-                          slices= strat_val.values(),
-    #                     voxet={'bounding_box':boundary_points,'nsteps':(100,100,50)},
-                          paint_with=strati['feature'],
-                          cmap='tab20'
-
-                         )
-    #viewer.add_scalar_field(model.bounding_box,(100,100,100),
-   #                           'scalar',
-    ##                             norm=True,
-    #                         paint_with=strati['feature'],
-    #                         cmap='tab20')
-    viewer.add_scalar_field(strati['feature'])
-    viewer.set_viewer_rotation([-53.8190803527832, -17.1993350982666, -2.1576387882232666])
-    #viewer.save("fdi_surfaces.png")
-    viewer.interactive()
     
     
 ##########################################################################
