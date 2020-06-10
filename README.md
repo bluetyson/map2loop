@@ -213,7 +213,7 @@ Minimum map2loop inputs:
 -ii.	Stratigraphic code   
 -iii.	Stratigraphic group   
 -iv.	One of more fields that describe if sill, if igneous, if volcanic   
--v.	Min_age field   
+-v.	    Min_age field   
 -vi.	Max_age field (can be same as Min_age field, and can be simple numerical ordering (bigger number is older))   
    
 4.	Fault/Fold Axial Trace Polylines:   
@@ -221,11 +221,12 @@ Minimum map2loop inputs:
 -b.	Faults/Folds have as attributes:   
 -i.	Object ID   
 -ii.	Field that determines if polyline is fault or fold axial trace   
--iii.	Field that determine type of fold axial trace e.g. syncline or anticline)   
+-iii.	Field that determine type of fold axial trace e.g. syncline or anticline)
+-iv.    Faults can have dip/dip direction info   
    
 5.	Bedding orientations:   
--a.	Assumes dip/dip direction data   
+-a.	Assumes dip/dip direction or dip/strike data   
 -b.	Orientations have as attributes:   
 -i.	Dip   
--ii.	Dip Direction   
+-ii.	Dip Direction or strike  
    

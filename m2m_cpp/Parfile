@@ -11,9 +11,9 @@ POLYGON: CODE                   =CODE
 POLYGON: DESCRIPTION            =DESCRIPTN
 POLYGON: ROCKTYPE1              =ROCKTYPE1
 POLYGON: ROCKTYPE2              =ROCKTYPE2
-DEPOSIT: SITE CODE                                  =SITE_CODE
-DEPOSIT: SITE TYPE                                  =SITE_TYPE_
-DEPOSIT: SITE COMMODITY                             =SITE_COMMO
+DEPOSIT: SITE CODE              =SITE_CODE
+DEPOSIT: SITE TYPE              =SITE_TYPE_
+DEPOSIT: SITE COMMODITY         =SITE_COMMO
 --- SOME CONSTANTS: ----------------------------------------------------------------------------
 FAULT AXIAL FEATURE NAME        =Fold axial trace
 SILL UNIT DESCRIPTION CONTAINS  =sill
