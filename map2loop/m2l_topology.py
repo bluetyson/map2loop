@@ -740,7 +740,7 @@ def check_near_fault_contacts(path_faults,all_sorts_path,fault_dimensions_path,g
     gp_fault_rel.to_csv(gp_fault_rel_path)
 
 
-def super_groups_and_groups(group_girdle,tmp_path):
+def super_groups_and_groups(group_girdle,tmp_path,misorientation):
     group_girdle =pd.DataFrame.from_dict(group_girdle,orient='index')
     group_girdle.columns = ['plunge', 'bearing', 'num orientations']
     group_girdle.sort_values(by='num orientations', ascending=False,inplace=True)
@@ -762,8 +762,7 @@ def super_groups_and_groups(group_girdle,tmp_path):
             if c>1:
                 c=1
             c=degrees(acos(c))  
-
-            if(c<30  and not found):
+            if(c<misorientation  and not found):
                 found=True
                 sgname='Super_Group_'+str(sg_i)
                 super_group_old=pd.DataFrame([[group_girdle[i:i+1].index[0],sgname,l,m,n]],columns=['Group','Super_Group','l','m','n'])
