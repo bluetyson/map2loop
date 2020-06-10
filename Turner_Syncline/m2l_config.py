@@ -68,7 +68,7 @@ c_l= {
   "fault": 'Fault',            #text to search for in field defined by f code to show that this is a fault
   "fold": 'Fold axial trace',  #text to search for in field defined by f code to show that this is a fold axial trace
   "fdip": 'DIP',               # field for numeric fault dip value
-  "fdipnull": '-9999',         # text to search for in field defined by fdip to show that this has no known dip
+  "fdipnull": '0',         # text to search for in field defined by fdip to show that this has no known dip
   "fdipdir": 'DIP_DIR',        # field for text fault dip direction value 
   "fdipdir_flag": 'alpha',        # flag for text fault dip direction type num e.g. 045 or alpha e.g. southeast    
   "fdipest": 'DIP_EST',        # field for text fault dip estimate value
